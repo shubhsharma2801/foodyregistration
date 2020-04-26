@@ -21,7 +21,8 @@ export default class HomePage extends React.Component {
       },
       saving: false,
       success: false,
-      validated: false
+      validated: false,
+      error :false
     };
     this.onChangeHandler = this.onChangeHandler.bind(this);
   }
@@ -57,6 +58,8 @@ export default class HomePage extends React.Component {
         setTimeout(() => this.props.closeForm(), 2000);
         this.setState({ saving: false, success: true });
         console.log(data);
+      }).catch(err=>{
+        this.setState({ saving: false, error: true });
       });
   }
   render() {
@@ -73,6 +76,13 @@ export default class HomePage extends React.Component {
               {this.state.success ? (
                 <Alert variant="success">
                   Resturant Registered Successfully
+                </Alert>
+              ) : (
+                ""
+              )}
+              {this.state.error ? (
+                <Alert variant="danger">
+                  There was an issue while saving.
                 </Alert>
               ) : (
                 ""
