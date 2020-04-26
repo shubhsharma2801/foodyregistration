@@ -9,6 +9,7 @@ import Alert from "react-bootstrap/Alert";
 export default class HomePage extends React.Component {
   constructor(props) {
     super(props);
+    //registerData store the details of form
     this.state = {
       registerData: {
         resturantName: "",
@@ -26,6 +27,7 @@ export default class HomePage extends React.Component {
     };
     this.onChangeHandler = this.onChangeHandler.bind(this);
   }
+  //singular onchange handler to handle onchange on multiple input on form on basis of their name and value
   onChangeHandler = event => {
     var name = event.target.name;
     var value = event.target.value;
@@ -33,11 +35,14 @@ export default class HomePage extends React.Component {
     registerData[name] = value;
     this.setState({ registerData });
   };
+  //To close the Modal we call the function on Parent HomePage which is passed to this component using props.
   close() {
     this.props.closeForm();
   }
+  //When form is Submitted
   onSubmit(e) {
     const form = e.currentTarget;
+    //To check form validity
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
@@ -50,21 +55,25 @@ export default class HomePage extends React.Component {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: this.state.registerData })
+      body: JSON.stringify({ detail: this.state.registerData })
     };
+    //Post request to Node.js registerApi api to save the form
     fetch("http://localhost:9000/registerApi", requestOptions)
       .then(response => response.json())
       .then(data => {
-        setTimeout(() => this.props.closeForm(), 2000);
+        setTimeout(() => this.props.closeForm(), 3000);
+        //showing success alert
         this.setState({ saving: false, success: true });
         console.log(data);
       }).catch(err=>{
+          //showing error alert
         this.setState({ saving: false, error: true });
       });
   }
   render() {
     return (
       <div>
+          {/**Parent Modal to show overaly on top of page */}
         <Modal show={true} centered onHide={this.close.bind(this)}>
           <Card
             style={{
@@ -73,6 +82,7 @@ export default class HomePage extends React.Component {
             }}
           >
             <Card.Body>
+                {/**Showing alert on basis of state variable */}
               {this.state.success ? (
                 <Alert variant="success">
                   Resturant Registered Successfully
@@ -139,6 +149,7 @@ export default class HomePage extends React.Component {
                     <Form.Label>Pincode</Form.Label>
                     <Form.Control
                     required
+                    placeholder="Enter Pincode..."
                       type="number"
                       name="pincode"
                       onChange={this.onChangeHandler}
